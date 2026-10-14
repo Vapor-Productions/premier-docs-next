@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Premier Bot">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E4C89A"/>
+      <stop offset="1" stop-color="#A47B4C"/>
+    </linearGradient>
+    <linearGradient id="gold-dark" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C7A879"/>
+      <stop offset="1" stop-color="#8C6540"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="40" fill="#222222"/>
+  <rect x="16" y="16" width="224" height="224" rx="32" fill="#1A1A1A" stroke="#2C221A" stroke-width="4"/>
+  <g transform="translate(64 48)">
+    <polygon points="64,0 104,30 92,42 64,24 36,42 24,30" fill="url(#gold)"/>
+    <polygon points="64,36 100,64 88,76 64,60 40,76 28,64" fill="url(#gold-dark)"/>
+    <polygon points="64,92 80,108 64,124 48,108" fill="url(#gold)"/>
+  </g>
+  <rect x="56" y="48" width="28" height="8" rx="4" fill="#E05A5A"/>
+  <rect x="88" y="48" width="22" height="8" rx="4" fill="#7ED0C3"/>
+  <rect x="56" y="200" width="28" height="8" rx="4" fill="#7ED0C3"/>
+  <rect x="88" y="200" width="22" height="8" rx="4" fill="#E05A5A"/>
+</svg>

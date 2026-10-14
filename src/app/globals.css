@@ -1,26 +1,210 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root,
+html[data-theme="light"] {
+  --bg: #f7f4ef;
+  --bg-elevated: #fffdf9;
+  --bg-soft: #efe8dc;
+  --border: #ddd2c2;
+  --fg: #0f1923;
+  --fg-secondary: #4a5560;
+  --muted: #6b7280;
+  --primary: #ff4655;
+  --primary-soft: rgba(255, 70, 85, 0.12);
+  --gold: #a47b4c;
+  --nav-hover: rgba(15, 25, 35, 0.05);
+  --nav-active-bg: var(--primary-soft);
+  --code-bg: rgba(15, 25, 35, 0.06);
+  --table-head: #efe8dc;
+}
+
+html.dark,
+html[data-theme="dark"] {
+  --bg: #0f1923;
+  --bg-elevated: #121c28;
+  --bg-soft: #172231;
+  --border: #2a3544;
+  --fg: #f2e8d8;
+  --fg-secondary: #b8a894;
+  --muted: #8b929a;
+  --primary: #ff4655;
+  --primary-soft: rgba(255, 70, 85, 0.16);
+  --gold: #e4c89a;
+  --nav-hover: rgba(242, 232, 216, 0.06);
+  --nav-active-bg: var(--primary-soft);
+  --code-bg: rgba(228, 200, 154, 0.1);
+  --table-head: #1b2735;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
+}
+
+html.dark,
+html[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(900px 420px at 8% -8%, rgba(255, 70, 85, 0.08), transparent 55%),
+    radial-gradient(700px 360px at 95% 0%, rgba(228, 200, 154, 0.08), transparent 50%),
+    var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+.prose-docs {
+  max-width: 46rem;
+  line-height: 1.7;
+}
+
+.prose-docs > :first-child {
+  margin-top: 0;
+}
+
+.prose-docs h1 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--gold);
+}
+
+.prose-docs .lead {
+  margin: 0 0 1.75rem;
+  color: var(--fg-secondary);
+  font-size: 1.05rem;
+}
+
+.prose-docs h2 {
+  margin: 2.25rem 0 0.85rem;
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.prose-docs h3 {
+  margin: 1.6rem 0 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.prose-docs p,
+.prose-docs li {
+  color: var(--fg);
+}
+
+.prose-docs p {
+  margin: 0.85rem 0;
+}
+
+.prose-docs ul,
+.prose-docs ol {
+  margin: 0.85rem 0;
+  padding-left: 1.25rem;
+}
+
+.prose-docs li + li {
+  margin-top: 0.3rem;
+}
+
+.prose-docs a {
+  color: var(--primary);
+  text-underline-offset: 0.15em;
+}
+
+.prose-docs a:hover {
+  color: #ff6b6b;
+}
+
+.prose-docs strong {
+  font-weight: 650;
+}
+
+.prose-docs code {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.9em;
+  background: var(--code-bg);
+  padding: 0.12em 0.35em;
+  border-radius: 0.3em;
+}
+
+.prose-docs table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0 1.4rem;
+  font-size: 0.95rem;
+}
+
+.prose-docs th,
+.prose-docs td {
+  border: 1px solid var(--border);
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose-docs th {
+  background: var(--table-head);
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.prose-docs img {
+  max-width: min(100%, 30rem);
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+  background: var(--bg-soft);
+}
+
+.prose-docs .note {
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+  border-left: 3px solid var(--primary);
+  background: var(--primary-soft);
+  color: var(--fg-secondary);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.prose-docs .card-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.prose-docs .card-list a {
+  display: block;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--bg-elevated);
+  text-decoration: none;
+  color: var(--gold);
+}
+
+.prose-docs .card-list a:hover {
+  border-color: var(--primary);
+}
+
+.prose-docs .card-list span {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--fg-secondary);
+  font-size: 0.92rem;
 }

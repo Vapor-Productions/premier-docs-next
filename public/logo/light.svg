@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="96" viewBox="0 0 320 96" role="img" aria-label="Premier Bot">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E6CFA6"/>
+      <stop offset="1" stop-color="#B48758"/>
+    </linearGradient>
+    <linearGradient id="gold-dark" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C7A879"/>
+      <stop offset="1" stop-color="#8C6540"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="96" rx="18" fill="#F3EDE5"/>
+  <rect x="6" y="6" width="308" height="84" rx="16" fill="#E8E0D6" stroke="#D2C2AE" stroke-width="2"/>
+  <g transform="translate(18 6) scale(1.1)">
+    <polygon points="36,6 58,22 50,30 36,20 22,30 14,22" fill="url(#gold)"/>
+    <polygon points="36,24 56,40 48,48 36,38 24,48 16,40" fill="url(#gold-dark)"/>
+    <polygon points="36,52 46,62 36,72 26,62" fill="url(#gold)"/>
+  </g>
+  <text x="112" y="62" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#4A3527" letter-spacing="1">Premier Bot</text>
+</svg>

@@ -1,0 +1,135 @@
+import { FlowSteps } from "@/components/FlowSteps";
+
+export const metadata = {
+  title: "Riot account linking",
+  description:
+    "How players opt in with Riot Sign-On — public user flow for reviewers",
+};
+
+<div className="prose-docs">
+
+# Riot account linking
+
+<p className="lead">
+  How players opt in with Riot Sign-On — public user flow for reviewers.
+</p>
+
+## Overview
+
+Premier Planner is a Discord bot for Valorant Premier team organisation. Players
+who want roster verification and team features link their Riot account with
+**official Riot Sign-On (RSO)**. Linking is optional and player-initiated.
+
+Riot reviewers: this page is the public visual flow of account linking. You do
+**not** need to join a Discord server to understand the product.
+
+## What we use Riot for
+
+| Capability | How |
+| --- | --- |
+| Player identity | Riot Sign-On + Account API `GET /riot/account/v1/accounts/me` |
+| Stored fields | `puuid`, current Riot ID (`gameName` + `tagLine`), link timestamp, Discord user id |
+| Premier roster checks | Team name/tag lookup to mark whether a linked member appears on a Premier roster |
+
+We do **not** provide item store checkers, cheats, real-time performance
+overlays, betting, or unofficial ranked ladders.
+
+## Opt-in and public data
+
+By linking, the player opts in to sharing their Riot identity with Premier
+Planner. Their **Riot ID** and **team membership / roster status** may be
+visible to members of Discord servers where they use the bot.
+
+Full details: [Privacy Policy](/legal/privacy-policy).
+
+## User flow
+
+<FlowSteps />
+
+### Step 1 — Start in Discord
+
+The player runs `/riot link` (available to every user; no admin required).
+
+They receive an **ephemeral** message that includes:
+
+1. The opt-in disclaimer (linking makes Riot identity / team status visible in that server context).
+2. A link to the privacy policy.
+3. A **Sign in with Riot** button.
+
+### Step 2 — Riot Sign-On
+
+The button opens Riot’s authorize page (`auth.riotgames.com`) with scopes
+`openid` and `offline_access`. The player signs in with their Riot account.
+
+### Step 3 — Callback
+
+Riot redirects to our registered `RIOT_REDIRECT_URI`. The bot exchanges the
+code, calls `accounts/me`, and saves the identity for that Discord user. The
+success page repeats the opt-in notice.
+
+### Step 4 — Use in Discord
+
+After linking, Premier Planner can associate the Discord member with their Riot
+identity for team and Premier roster features (for example: on-roster /
+not-on-roster markers on a team view).
+
+Unlinked players are simply shown as not linked; we do not invent or scrape
+identity for players who have not opted in via RSO.
+
+### Step 5 — Unlink (opt-out)
+
+Players can remove their Riot identity at any time with `/riot unlink`. That
+clears the stored `puuid`, Riot ID, and link timestamp for that Discord user.
+Team and roster features then treat them as not linked until they run
+`/riot link` again.
+
+## Screenshots (for reviewers)
+
+<div className="note">
+  <strong>
+    You do not need live RSO screenshots to approve the production-key
+    application.
+  </strong>{" "}
+  Riot issues the RSO client id and secret <em>after</em> that approval, when
+  they kick off RSO integration. Until then, this page (flowchart + steps above)
+  plus the Discord UI mockup below is the public prototype / visual user flow.
+</div>
+
+### Discord `/riot link` (mockup — pre-RSO credentials)
+
+This is the ephemeral reply players see before Sign-On. The authorize URL is
+inactive until Riot issues the RSO client.
+
+<img
+  src="/images/riot-link-ephemeral-mockup.png"
+  alt="Mockup of Discord ephemeral /riot link reply with opt-in disclaimer and Sign in with Riot button"
+  width="480"
+/>
+
+After RSO credentials are issued and configured on the bot, replace mocks with
+real captures:
+
+| Shot | What to capture | When |
+| --- | --- | --- |
+| Discord `/riot link` | Ephemeral reply: opt-in disclaimer, privacy policy link, **Sign in with Riot** button | After RSO client is configured |
+| Riot authorize | Riot Sign-On page after the button (`auth.riotgames.com`) | After RSO client is configured |
+| Callback success | Premier Planner callback page confirming the link and repeating opt-in | After RSO client is configured |
+| Discord after link | Team view showing roster status for a linked member | After a test link |
+| Discord `/riot unlink` | Ephemeral unlink confirmation | After a test link |
+
+Do **not** include passwords, full email addresses, or unrelated PII in
+screenshots. Blur Discord avatars if needed.
+
+## Production vs development
+
+| Environment | Account linking |
+| --- | --- |
+| Production | **RSO only** (`/riot link`) |
+| Development | RSO preferred; non-RSO name/tag helpers exist only with `ALLOW_NON_RSO_LINK=true` and bot-dev IDs — never in production |
+
+## Legal
+
+- [Privacy Policy](/legal/privacy-policy)
+- [Terms of Service](/legal/terms-of-service)
+
+</div>

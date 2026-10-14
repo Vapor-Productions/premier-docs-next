@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Premier Planner Docs (Next.js)
 
-## Getting Started
+Mintlify-style documentation site for Premier Planner, built with **Next.js 16 App Router + MDX**.
 
-First, run the development server:
+Replaces Mintlify hosting so Riot can verify a plain-text product URL.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Riot URL verification
+
+Exact file served from `public/`:
+
+`public/guides/riot-account-linking/riot.txt`
+
+Public URL (after cutover):
+
+`https://docs.premierplanner.eu/guides/riot-account-linking/riot.txt`
+
+Body must be exactly:
+
+```text
+af78cfac-a9b4-4f5d-98dc-1f7acc85c942
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+(36 characters, no trailing newline)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cd "C:/Files-With-Importance/Discord-Projecten/Bot Documentation/premplan-docs-next"
+npm install
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+Verify Riot file:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+curl -sS http://localhost:3000/guides/riot-account-linking/riot.txt
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Content map
 
-## Deploy on Vercel
+| URL | Source |
+| --- | --- |
+| `/` | `src/app/page.mdx` |
+| `/guides/riot-account-linking` | `src/app/guides/riot-account-linking/page.mdx` |
+| `/guides/riot-account-linking/riot.txt` | `public/guides/riot-account-linking/riot.txt` |
+| `/legal/privacy-policy` | `src/app/legal/privacy-policy/page.mdx` |
+| `/legal/terms-of-service` | `src/app/legal/terms-of-service/page.mdx` |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Legacy Mintlify sources remain in sibling folder `../premplan-docs`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy (Vercel)
+
+```bash
+npx vercel login
+npx vercel --prod
+```
+
+Or connect this directory to a Vercel project in the dashboard (Framework: Next.js).
+
+### Custom domain cutover for `docs.premierplanner.eu`
+
+Today DNS points at Mintlify (`CNAME docs → cname.mintlify.builders`, proxied on Cloudflare zone `premierplanner.eu`).
+
+1. Deploy this app to Vercel and confirm a preview URL works, including `/guides/riot-account-linking/riot.txt`.
+2. In Vercel → Project → Domains → add `docs.premierplanner.eu`.
+3. In Cloudflare DNS for `premierplanner.eu`, change the `docs` record from Mintlify to the target Vercel shows (often `cname.vercel-dns.com`), keep **Proxied** or follow Vercel’s DNS instructions.
+4. Wait for TLS + propagation, then:
+
+```bash
+curl -sS -D- https://docs.premierplanner.eu/guides/riot-account-linking/riot.txt
+```
+
+Expect `200` and the exact UUID body.
+
+5. In the Riot developer portal, click **Verify URL**.
+6. Disconnect the Mintlify custom domain so it no longer competes for `docs.premierplanner.eu`.
+
+## Branding
+
+- Primary: `#FF4655`
+- Dark background: `#0F1923`
+- Gold accents from existing logo assets in `public/logo/`
