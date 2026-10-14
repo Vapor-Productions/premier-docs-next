@@ -10,10 +10,11 @@ const steps = [
 
 export function FlowSteps() {
   return (
-    <ol className="my-4 list-decimal space-y-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft)] px-6 py-4 text-[var(--fg-secondary)]">
-      {steps.map((step) => (
+    <ol className="flow-steps">
+      {steps.map((step, index) => (
         <li key={step}>
-          <span className="text-[var(--fg)]">{step}</span>
+          <span className="flow-steps__index">{index + 1}</span>
+          <span className="flow-steps__text">{step}</span>
         </li>
       ))}
     </ol>

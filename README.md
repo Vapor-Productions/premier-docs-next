@@ -10,7 +10,7 @@ Exact file served from `public/`:
 
 `public/guides/riot-account-linking/riot.txt`
 
-Public URL (after cutover):
+Public URL:
 
 `https://docs.premierplanner.eu/guides/riot-account-linking/riot.txt`
 
@@ -26,6 +26,8 @@ af78cfac-a9b4-4f5d-98dc-1f7acc85c942
 
 ```bash
 cd "C:/Files-With-Importance/Discord-Projecten/Bot Documentation/premplan-docs-next"
+cp .env.example .env.local
+# set AUTH_SECRET, EDITOR_USERNAME, EDITOR_PASSWORD
 npm install
 npm run dev
 ```
@@ -42,13 +44,22 @@ curl -sS http://localhost:3000/guides/riot-account-linking/riot.txt
 
 | URL | Source |
 | --- | --- |
-| `/` | `src/app/page.mdx` |
-| `/guides/riot-account-linking` | `src/app/guides/riot-account-linking/page.mdx` |
+| `/` | `src/app/(docs)/page.mdx` |
+| `/guides/riot-account-linking` | `src/app/(docs)/guides/riot-account-linking/page.mdx` |
 | `/guides/riot-account-linking/riot.txt` | `public/guides/riot-account-linking/riot.txt` |
-| `/legal/privacy-policy` | `src/app/legal/privacy-policy/page.mdx` |
-| `/legal/terms-of-service` | `src/app/legal/terms-of-service/page.mdx` |
+| `/legal/privacy-policy` | `src/app/(docs)/legal/privacy-policy/page.mdx` |
+| `/legal/terms-of-service` | `src/app/(docs)/legal/terms-of-service/page.mdx` |
 
-Legacy Mintlify sources remain in sibling folder `../premplan-docs`.
+## Docs editor (auth-gated)
+
+- Public docs: no login required
+- Editor: `/editor` (redirects to `/login` when signed out)
+- Auth: Auth.js (NextAuth v5) credentials provider
+- Env vars: `AUTH_SECRET`, `EDITOR_USERNAME`, `EDITOR_PASSWORD` (see `.env.example`)
+
+Sign in at `/login` with the configured editor username/password. The editor lists MDX pages under `src/app/(docs)/`, edits source, previews text, and saves back to disk via `/api/docs`.
+
+Note: filesystem saves persist in local/dev. On Vercel the deploy filesystem is ephemeral — use the editor locally (or a later Git-backed save) for durable production edits.
 
 ## Deploy (Vercel)
 
@@ -59,36 +70,17 @@ Live production:
 - GitHub: [Vapor-Productions/premier-docs-next](https://github.com/Vapor-Productions/premier-docs-next)
 - Vercel project: `premier-docs`
 
-Redeploy after push to `main`, or:
+Set the auth env vars in the Vercel project, then push to `main` (or `npx vercel --prod`).
 
-```bash
-npx vercel login
-npx vercel --prod
-```
-
-### Domain / DNS (already cut over)
+### Domain / DNS
 
 Cloudflare zone `premierplanner.eu`:
 
 - `docs` → `CNAME cname.vercel-dns.com` (proxied)
 - `_vercel` TXT verification for Vercel
 
-Mintlify is no longer the origin for `docs.premierplanner.eu`. You can disconnect the Mintlify custom domain in the Mintlify dashboard when convenient.
-
-Riot Verify URL (use this):
+Riot Verify URL:
 
 ```text
 https://docs.premierplanner.eu/guides/riot-account-linking/riot.txt
 ```
-
-```bash
-curl -sS -D- https://docs.premierplanner.eu/guides/riot-account-linking/riot.txt
-```
-
-Expect `200` and the exact UUID body.
-
-## Branding
-
-- Primary: `#FF4655`
-- Dark background: `#0F1923`
-- Gold accents from existing logo assets in `public/logo/`

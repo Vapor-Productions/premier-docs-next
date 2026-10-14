@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, Libre_Baskerville, IBM_Plex_Mono } from "next/font/google";
-import { DocsShell } from "@/components/DocsShell";
+import {
+  IBM_Plex_Sans,
+  Libre_Baskerville,
+  IBM_Plex_Mono,
+} from "next/font/google";
 import { siteName } from "@/lib/nav";
 import "./globals.css";
 
@@ -42,16 +45,16 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="dark"
-      className={`dark ${body.variable} ${display.variable} ${mono.variable} h-full antialiased`}
+      className={`dark ${body.variable} ${display.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-full">
+      <body>
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('pp-docs-theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;document.documentElement.classList.toggle('dark',t==='dark');}}catch(e){}})();`,
           }}
         />
-        <DocsShell>{children}</DocsShell>
+        {children}
       </body>
     </html>
   );

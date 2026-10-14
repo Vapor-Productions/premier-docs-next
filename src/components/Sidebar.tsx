@@ -13,13 +13,11 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <nav className="space-y-6 text-sm" aria-label="Documentation">
+    <nav className="docs-nav" aria-label="Documentation">
       {navigation.map((group) => (
         <div key={group.title}>
-          <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
-            {group.title}
-          </p>
-          <ul className="space-y-0.5">
+          <p className="docs-nav__group-title">{group.title}</p>
+          <ul className="docs-nav__list">
             {group.items.map((item) => {
               const active = isActive(pathname, item.href);
               return (
@@ -27,12 +25,9 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                   <Link
                     href={item.href}
                     onClick={onNavigate}
-                    className={[
-                      "block rounded-md px-2 py-1.5 transition-colors",
-                      active
-                        ? "bg-[var(--nav-active-bg)] font-medium text-[var(--primary)]"
-                        : "text-[var(--fg-secondary)] hover:bg-[var(--nav-hover)] hover:text-[var(--fg)]",
-                    ].join(" ")}
+                    className={
+                      active ? "docs-nav__link is-active" : "docs-nav__link"
+                    }
                     aria-current={active ? "page" : undefined}
                   >
                     {item.title}

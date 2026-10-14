@@ -34,7 +34,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="rounded-md border border-[var(--border)] px-2.5 py-1.5 text-xs font-medium text-[var(--fg-secondary)] hover:border-[var(--primary)] hover:text-[var(--fg)]"
+      className="docs-theme-toggle"
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
       {theme === "dark" ? "Light" : "Dark"}
