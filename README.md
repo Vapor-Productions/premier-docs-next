@@ -52,30 +52,40 @@ Legacy Mintlify sources remain in sibling folder `../premplan-docs`.
 
 ## Deploy (Vercel)
 
+Live production:
+
+- App: [https://premier-docs.vercel.app](https://premier-docs.vercel.app)
+- Custom domain: [https://docs.premierplanner.eu](https://docs.premierplanner.eu)
+- GitHub: [Vapor-Productions/premier-docs-next](https://github.com/Vapor-Productions/premier-docs-next)
+- Vercel project: `premier-docs`
+
+Redeploy after push to `main`, or:
+
 ```bash
 npx vercel login
 npx vercel --prod
 ```
 
-Or connect this directory to a Vercel project in the dashboard (Framework: Next.js).
+### Domain / DNS (already cut over)
 
-### Custom domain cutover for `docs.premierplanner.eu`
+Cloudflare zone `premierplanner.eu`:
 
-Today DNS points at Mintlify (`CNAME docs → cname.mintlify.builders`, proxied on Cloudflare zone `premierplanner.eu`).
+- `docs` → `CNAME cname.vercel-dns.com` (proxied)
+- `_vercel` TXT verification for Vercel
 
-1. Deploy this app to Vercel and confirm a preview URL works, including `/guides/riot-account-linking/riot.txt`.
-2. In Vercel → Project → Domains → add `docs.premierplanner.eu`.
-3. In Cloudflare DNS for `premierplanner.eu`, change the `docs` record from Mintlify to the target Vercel shows (often `cname.vercel-dns.com`), keep **Proxied** or follow Vercel’s DNS instructions.
-4. Wait for TLS + propagation, then:
+Mintlify is no longer the origin for `docs.premierplanner.eu`. You can disconnect the Mintlify custom domain in the Mintlify dashboard when convenient.
+
+Riot Verify URL (use this):
+
+```text
+https://docs.premierplanner.eu/guides/riot-account-linking/riot.txt
+```
 
 ```bash
 curl -sS -D- https://docs.premierplanner.eu/guides/riot-account-linking/riot.txt
 ```
 
 Expect `200` and the exact UUID body.
-
-5. In the Riot developer portal, click **Verify URL**.
-6. Disconnect the Mintlify custom domain so it no longer competes for `docs.premierplanner.eu`.
 
 ## Branding
 
