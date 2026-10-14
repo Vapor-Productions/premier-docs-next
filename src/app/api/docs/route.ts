@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { listDocPages, readDocPage, writeDocPage } from "@/lib/docs-content";
+import { canEditDocs, canReadEditor } from "@/lib/roles";
 
 export async function GET(request: Request) {
   const session = await auth();
-  if (!session?.user) {
+  if (!session?.user || !canReadEditor(session.user.roles)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -27,13 +28,21 @@ export async function GET(request: Request) {
       title,
       relativePath,
     })),
+    roles: session.user.roles,
   });
 }
 
 export async function PUT(request: Request) {
   const session = await auth();
-  if (!session?.user) {
+  if (!session?.user || !canReadEditor(session.user.roles)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!canEditDocs(session.user.roles)) {
+    return NextResponse.json(
+      { error: "Forbidden: viewer role cannot save" },
+      { status: 403 },
+    );
   }
 
   let body: { slug?: string; content?: string };

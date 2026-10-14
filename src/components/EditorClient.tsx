@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { DocRole } from "@/lib/roles";
 
 type DocListItem = {
   slug: string;
@@ -12,9 +13,13 @@ type DocListItem = {
 export function EditorClient({
   initialPages,
   userName,
+  roles,
+  canSave,
 }: {
   initialPages: DocListItem[];
   userName: string;
+  roles: DocRole[];
+  canSave: boolean;
 }) {
   const [pages, setPages] = useState(initialPages);
   const [slug, setSlug] = useState(initialPages[0]?.slug ?? "");
@@ -23,7 +28,9 @@ export function EditorClient({
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [mode, setMode] = useState<"edit" | "preview">("edit");
+  const [mode, setMode] = useState<"edit" | "preview">(
+    canSave ? "edit" : "preview",
+  );
 
   const current = useMemo(
     () => pages.find((page) => page.slug === slug),
@@ -57,6 +64,10 @@ export function EditorClient({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function save() {
+    if (!canSave) {
+      setStatus("Viewer role cannot save changes.");
+      return;
+    }
     setSaving(true);
     setStatus(null);
     try {
@@ -90,7 +101,9 @@ export function EditorClient({
       <header className="editor-header">
         <div className="editor-header__brand">
           <span>Docs editor</span>
-          <small>{userName}</small>
+          <small>
+            {userName} · {roles.join(", ") || "no roles"}
+          </small>
         </div>
         <div className="editor-header__actions">
           <Link href={previewHref} target="_blank" className="editor-btn ghost">
@@ -140,13 +153,15 @@ export function EditorClient({
             </div>
             <div className="editor-toolbar__right">
               <div className="editor-tabs">
-                <button
-                  type="button"
-                  className={mode === "edit" ? "is-active" : undefined}
-                  onClick={() => setMode("edit")}
-                >
-                  Edit
-                </button>
+                {canSave ? (
+                  <button
+                    type="button"
+                    className={mode === "edit" ? "is-active" : undefined}
+                    onClick={() => setMode("edit")}
+                  >
+                    Edit
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   className={mode === "preview" ? "is-active" : undefined}
@@ -155,22 +170,33 @@ export function EditorClient({
                   Preview
                 </button>
               </div>
-              <button
-                type="button"
-                className="editor-btn primary"
-                onClick={() => void save()}
-                disabled={saving || loading || !slug}
-              >
-                {saving ? "Saving…" : "Save"}
-              </button>
+              {canSave ? (
+                <button
+                  type="button"
+                  className="editor-btn primary"
+                  onClick={() => void save()}
+                  disabled={saving || loading || !slug}
+                >
+                  {saving ? "Saving…" : "Save"}
+                </button>
+              ) : (
+                <span className="editor-btn ghost" aria-disabled="true">
+                  View only
+                </span>
+              )}
             </div>
           </div>
 
           {status ? <p className="editor-status">{status}</p> : null}
+          {!canSave ? (
+            <p className="editor-status">
+              Signed in as viewer — you can browse source but not save.
+            </p>
+          ) : null}
 
           {loading ? (
             <p className="editor-status">Loading…</p>
-          ) : mode === "edit" ? (
+          ) : mode === "edit" && canSave ? (
             <textarea
               className="editor-textarea"
               value={content}
