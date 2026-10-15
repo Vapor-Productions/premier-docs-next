@@ -2,13 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { navigation } from "@/lib/nav";
+import type { SearchEntry } from "@/lib/search-index";
 
-const items = navigation.flatMap((group) =>
-  group.items.map((item) => ({ ...item, group: group.title })),
-);
-
-export function SearchDialog() {
+export function SearchDialog({ entries }: { entries: SearchEntry[] }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [index, setIndex] = useState(0);
@@ -17,13 +13,16 @@ export function SearchDialog() {
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((item) =>
-      `${item.title} ${item.description} ${item.group}`
-        .toLowerCase()
-        .includes(q),
-    );
-  }, [query]);
+    if (!q) return entries.filter((entry) => entry.kind === "page");
+    return entries
+      .filter((entry) =>
+        `${entry.title} ${entry.description} ${entry.group}`
+          .toLowerCase()
+          .includes(q),
+      )
+      .sort((a, b) => (a.kind === b.kind ? 0 : a.kind === "page" ? -1 : 1))
+      .slice(0, 12);
+  }, [entries, query]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -129,7 +128,7 @@ export function SearchDialog() {
                 setIndex(0);
               }}
               onKeyDown={onInputKey}
-              placeholder="Jump to a page…"
+              placeholder="Search pages and sections…"
               aria-label="Search pages"
               aria-controls="search-results"
               aria-activedescendant={
@@ -144,7 +143,7 @@ export function SearchDialog() {
             ) : (
               results.map((item, i) => (
                 <li
-                  key={item.href}
+                  key={`${item.kind}-${item.href}`}
                   id={`search-result-${i}`}
                   role="option"
                   aria-selected={i === index}
@@ -152,9 +151,16 @@ export function SearchDialog() {
                   onMouseEnter={() => setIndex(i)}
                   onClick={() => go(item.href)}
                 >
-                  <span className="search-dialog__group">{item.group}</span>
-                  <strong>{item.title}</strong>
-                  <span>{item.description}</span>
+                  <span className="search-dialog__group">
+                    {item.kind === "section"
+                      ? `${item.group} › ${item.description}`
+                      : item.group}
+                  </span>
+                  <strong>
+                    {item.kind === "section" ? <span aria-hidden="true"># </span> : null}
+                    {item.title}
+                  </strong>
+                  {item.kind === "page" ? <span>{item.description}</span> : null}
                 </li>
               ))
             )}

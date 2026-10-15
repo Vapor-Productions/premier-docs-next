@@ -1798,3 +1798,29 @@ h3:hover .heading-anchor,
     display: none;
   }
 }
+
+/* ── Search sections / edit link ───────────────────────── */
+
+.search-dialog__results strong span {
+  font-size: inherit;
+  color: var(--accent-ink);
+}
+
+.edit-page-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 3rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--fg-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.edit-page-link:hover {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}

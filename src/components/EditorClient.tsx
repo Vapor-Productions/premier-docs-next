@@ -11,18 +11,20 @@ type DocListItem = {
 };
 
 export function EditorClient({
+  initialSlug,
   initialPages,
   userName,
   roles,
   canSave,
 }: {
+  initialSlug?: string;
   initialPages: DocListItem[];
   userName: string;
   roles: DocRole[];
   canSave: boolean;
 }) {
   const [pages, setPages] = useState(initialPages);
-  const [slug, setSlug] = useState(initialPages[0]?.slug ?? "");
+  const [slug, setSlug] = useState(initialSlug ?? initialPages[0]?.slug ?? "");
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState<string | null>(null);

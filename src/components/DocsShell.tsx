@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { navigation, supportEmail } from "@/lib/nav";
+import { getSearchIndex } from "@/lib/search-index";
 import { BrandLockup } from "./BrandMark";
+import { EditPageLink } from "./EditPageLink";
 import { MobileNav } from "./MobileNav";
 import { SearchDialog } from "./SearchDialog";
 import { Sidebar } from "./Sidebar";
 import { TableOfContents } from "./TableOfContents";
 import { ThemeToggle } from "./ThemeToggle";
 
-export function DocsShell({ children }: { children: React.ReactNode }) {
+export async function DocsShell({ children }: { children: React.ReactNode }) {
+  const searchIndex = await getSearchIndex();
+
   return (
     <div className="docs-shell">
       <a href="#content" className="skip-link">
@@ -22,7 +26,7 @@ export function DocsShell({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
           <div className="docs-header__right">
-            <SearchDialog />
+            <SearchDialog entries={searchIndex} />
             <a className="docs-support" href={`mailto:${supportEmail}`}>
               Support
             </a>
@@ -38,7 +42,10 @@ export function DocsShell({ children }: { children: React.ReactNode }) {
           </div>
         </aside>
         <main id="content" className="docs-main" tabIndex={-1}>
-          <article className="docs-article">{children}</article>
+          <article className="docs-article">
+            {children}
+            <EditPageLink />
+          </article>
         </main>
         <aside className="docs-toc">
           <div className="docs-toc__inner">

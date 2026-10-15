@@ -8,7 +8,11 @@ export const metadata = {
   title: "Docs editor",
 };
 
-export default async function EditorPage() {
+export default async function EditorPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ slug?: string }>;
+}) {
   const session = await auth();
   if (!session?.user) {
     redirect("/login?callbackUrl=/editor");
@@ -18,9 +22,12 @@ export default async function EditorPage() {
   }
 
   const pages = await listDocPages();
+  const { slug } = await searchParams;
+  const initialSlug = pages.some((page) => page.slug === slug) ? slug : undefined;
 
   return (
     <EditorClient
+      initialSlug={initialSlug}
       initialPages={pages.map(({ slug, title, relativePath }) => ({
         slug,
         title,

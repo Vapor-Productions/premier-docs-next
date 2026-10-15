@@ -2,6 +2,7 @@ import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
 import { isValidElement, type ReactNode } from "react";
 import { FlowSteps } from "@/components/FlowSteps";
+import { slugify } from "@/lib/slug";
 
 function isInternal(href?: string) {
   return Boolean(href && href.startsWith("/") && !href.startsWith("//"));
@@ -14,16 +15,6 @@ function textOf(node: ReactNode): string {
     return textOf(node.props.children);
   }
   return "";
-}
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^\w\s-]/g, "")
-    .trim()
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-");
 }
 
 function heading(Tag: "h2" | "h3") {
