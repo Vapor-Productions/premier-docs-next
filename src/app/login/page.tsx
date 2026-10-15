@@ -1,7 +1,7 @@
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { auth, signIn } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import {
   authentikConfigured,
   credentialsFallbackEnabled,
@@ -31,10 +31,45 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ callbackUrl?: string; error?: string }>;
 }) {
+  // No redirect for signed-in users here: the middleware already sends users who
+  // can open the editor to /editor. Redirecting any session from this page looped
+  // with the middleware sending users without a docs role back to /login.
   const session = await auth();
   const params = await searchParams;
+
   if (session?.user) {
-    redirect(params.callbackUrl || "/editor");
+    const roles = session.user.roles ?? [];
+
+    async function signOutAction() {
+      "use server";
+      await signOut({ redirectTo: "/login" });
+    }
+
+    return (
+      <div className="auth-shell">
+        <div className="auth-card">
+          <p className="auth-eyebrow">Premier Planner Docs</p>
+          <h1>No editor access</h1>
+          <p className="auth-lead">
+            Signed in as{" "}
+            <strong>{session.user.name || session.user.email || "unknown user"}</strong>
+            {session.user.email && session.user.name ? ` (${session.user.email})` : null}.
+          </p>
+          <p className="auth-error" role="alert">
+            {errorMessage("AccessDenied")} Docs roles on this session:{" "}
+            {roles.length > 0 ? roles.join(", ") : "none"}.
+          </p>
+          <form action={signOutAction}>
+            <button type="submit" className="auth-primary">
+              Sign out
+            </button>
+          </form>
+          <p className="auth-footer">
+            <Link href="/">← Back to docs</Link>
+          </p>
+        </div>
+      </div>
+    );
   }
 
   const oidcReady = authentikConfigured();
