@@ -18,7 +18,7 @@ export default auth((req) => {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
       const login = new URL("/login", req.nextUrl.origin);
-      login.searchParams.set("callbackUrl", pathname);
+      login.searchParams.set("callbackUrl", pathname + req.nextUrl.search);
       return NextResponse.redirect(login);
     }
 
