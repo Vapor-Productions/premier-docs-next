@@ -4,6 +4,7 @@ import Link from "next/link";
 import { auth, signIn } from "@/auth";
 import {
   authentikConfigured,
+  canReadEditor,
   credentialsFallbackEnabled,
 } from "@/lib/roles";
 
@@ -33,7 +34,9 @@ export default async function LoginPage({
 }) {
   const session = await auth();
   const params = await searchParams;
-  if (session?.user) {
+  // Only bounce users who can open the editor; otherwise /editor sends them
+  // straight back here and the browser loops.
+  if (session?.user && canReadEditor(session.user.roles)) {
     redirect(params.callbackUrl || "/editor");
   }
 
