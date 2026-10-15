@@ -1,25 +1,21 @@
-import type { Metadata } from "next";
-import {
-  IBM_Plex_Sans,
-  Libre_Baskerville,
-  IBM_Plex_Mono,
-} from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import Script from "next/script";
+import { Barlow_Condensed, Inter, JetBrains_Mono } from "next/font/google";
 import { siteName } from "@/lib/nav";
 import "./globals.css";
 
-const body = IBM_Plex_Sans({
+const body = Inter({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
 });
 
-const display = Libre_Baskerville({
+const display = Barlow_Condensed({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["600", "700", "800"],
 });
 
-const mono = IBM_Plex_Mono({
+const mono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -36,6 +32,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0b0f14" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f5f2" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,9 +52,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <script
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('pp-docs-theme');if(t==='light'||t==='dark'){document.documentElement.dataset.theme=t;document.documentElement.classList.toggle('dark',t==='dark');}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('pp-docs-theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.dataset.theme=t;document.documentElement.classList.toggle('dark',t==='dark');}catch(e){}})();`,
           }}
         />
         {children}
