@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { listDocPages, readDocPage, writeDocPage } from "@/lib/docs-content";
+import {
+  docRepoPath,
+  docTitle,
+  listDocPages,
+  readDocPage,
+  writeDocPage,
+} from "@/lib/docs-content";
+import {
+  commitGitHubFile,
+  GitHubConflictError,
+  githubContentEnabled,
+  readGitHubFile,
+} from "@/lib/github-content";
 import { canEditDocs, canReadEditor } from "@/lib/roles";
 
 export async function GET(request: Request) {
@@ -14,6 +26,12 @@ export async function GET(request: Request) {
 
   if (slug) {
     try {
+      if (githubContentEnabled()) {
+        const repoPath = docRepoPath(slug);
+        if (!repoPath) throw new Error("Invalid slug");
+        const { content, sha } = await readGitHubFile(repoPath);
+        return NextResponse.json({ slug, title: docTitle(slug, content), content, sha });
+      }
       const page = await readDocPage(slug);
       return NextResponse.json(page);
     } catch {
@@ -45,7 +63,7 @@ export async function PUT(request: Request) {
     );
   }
 
-  let body: { slug?: string; content?: string };
+  let body: { slug?: string; content?: string; sha?: string };
   try {
     body = await request.json();
   } catch {
@@ -63,9 +81,27 @@ export async function PUT(request: Request) {
   }
 
   try {
+    if (githubContentEnabled()) {
+      const repoPath = docRepoPath(slug);
+      if (!repoPath) throw new Error("Invalid slug");
+      // The sha the editor loaded makes GitHub reject the commit if the file
+      // changed since; without one, base the edit on the current file.
+      const sha = body.sha || (await readGitHubFile(repoPath)).sha;
+      const user = session.user.name || session.user.email || "unknown";
+      const committed = await commitGitHubFile(
+        repoPath,
+        content,
+        sha,
+        `docs: edit ${slug} via editor (${user})`,
+      );
+      return NextResponse.json({ ok: true, slug, ...committed });
+    }
     const saved = await writeDocPage(slug, content);
     return NextResponse.json({ ok: true, ...saved });
   } catch (error) {
+    if (error instanceof GitHubConflictError) {
+      return NextResponse.json({ error: error.message }, { status: 409 });
+    }
     const message = error instanceof Error ? error.message : "Save failed";
     return NextResponse.json({ error: message }, { status: 400 });
   }
