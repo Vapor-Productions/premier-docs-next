@@ -75,6 +75,17 @@ export function resolveDocPath(slug: string): string | null {
   return path.join(CONTENT_ROOT, ...normalized.split("/"), "page.mdx");
 }
 
+/** Repo-relative path of a page's MDX file, e.g. `src/app/(docs)/legal/x/page.mdx`. */
+export function docRepoPath(slug: string): string | null {
+  const filePath = resolveDocPath(slug);
+  if (!filePath) return null;
+  return path.relative(process.cwd(), filePath).split(path.sep).join("/");
+}
+
+export function docTitle(slug: string, source: string) {
+  return titleFromSource(source, titleFromSlug(slug));
+}
+
 export async function readDocPage(slug: string) {
   const filePath = resolveDocPath(slug);
   if (!filePath) throw new Error("Invalid slug");

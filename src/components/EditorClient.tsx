@@ -28,6 +28,8 @@ export function EditorClient({
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState<string | null>(null);
+  const [sha, setSha] = useState<string | undefined>();
+  const [commitUrl, setCommitUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [mode, setMode] = useState<"edit" | "preview">(
@@ -43,6 +45,7 @@ export function EditorClient({
     if (!nextSlug) return;
     setLoading(true);
     setStatus(null);
+    setCommitUrl(null);
     try {
       const res = await fetch(`/api/docs?slug=${encodeURIComponent(nextSlug)}`);
       if (!res.ok) throw new Error("Failed to load page");
@@ -50,10 +53,12 @@ export function EditorClient({
         content: string;
         title: string;
         slug: string;
+        sha?: string;
       };
       setSlug(data.slug);
       setContent(data.content);
       setTitle(data.title);
+      setSha(data.sha);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Load failed");
     } finally {
@@ -72,15 +77,22 @@ export function EditorClient({
     }
     setSaving(true);
     setStatus(null);
+    setCommitUrl(null);
     try {
       const res = await fetch("/api/docs", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, content }),
+        body: JSON.stringify({ slug, content, sha }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Save failed");
-      setStatus("Saved to content source.");
+      if (data.commitUrl) {
+        setSha(data.sha);
+        setCommitUrl(data.commitUrl);
+        setStatus("Committed to GitHub. The site redeploys in about a minute.");
+      } else {
+        setStatus("Saved to content source.");
+      }
       const listRes = await fetch("/api/docs");
       if (listRes.ok) {
         const listData = (await listRes.json()) as { pages: DocListItem[] };
@@ -189,7 +201,19 @@ export function EditorClient({
             </div>
           </div>
 
-          {status ? <p className="editor-status">{status}</p> : null}
+          {status ? (
+            <p className="editor-status">
+              {status}
+              {commitUrl ? (
+                <>
+                  {" "}
+                  <a href={commitUrl} target="_blank" rel="noreferrer">
+                    View commit
+                  </a>
+                </>
+              ) : null}
+            </p>
+          ) : null}
           {!canSave ? (
             <p className="editor-status">
               Signed in as viewer — you can browse source but not save.

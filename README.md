@@ -79,6 +79,8 @@ See `.env.example`. Required for OIDC:
 - `AUTHENTIK_CLIENT_ID`
 - `AUTHENTIK_CLIENT_SECRET`
 
+Required for saving in production: `GITHUB_CONTENT_TOKEN` (optional overrides: `GITHUB_CONTENT_REPO`, `GITHUB_CONTENT_BRANCH`). See below.
+
 ### Authentik console setup
 
 SSO host already in use: **https://auth.zvapor.xyz**
@@ -96,7 +98,13 @@ SSO host already in use: **https://auth.zvapor.xyz**
 
 Login URL: [https://docs.premierplanner.eu/login](https://docs.premierplanner.eu/login)
 
-Note: filesystem saves persist in local/dev. On Vercel the deploy filesystem is ephemeral — use the editor locally (or a later Git-backed save) for durable production edits.
+### Saving on Vercel (Git-backed)
+
+The Vercel filesystem is read-only and replaced on every deploy, so production saves go to GitHub. When `GITHUB_CONTENT_TOKEN` is set, the editor reads pages from GitHub and Save commits the MDX file to `GITHUB_CONTENT_BRANCH` (default `main`) of `GITHUB_CONTENT_REPO` (default `Vapor-Productions/premier-docs-next`). The commit redeploys the site in about a minute. If the file changed on GitHub after the page was opened, the save is refused with a conflict message instead of overwriting it.
+
+Token: a fine-grained personal access token with access to this repository only and **Contents: read and write**. Set it in Vercel (Production) only; never commit it.
+
+Without the token (local dev), saves write to the files on disk as before.
 
 ## Deploy (Vercel)
 
