@@ -15,9 +15,13 @@ This Privacy Policy explains how Premier Planner ("we", "us", "our") collects,
 uses, and protects information when you use our Discord bot and documentation
 hosted at `https://docs.premierplanner.eu`.
 
+Premier Planner is run by **zVapor (Vapor Productions)**, who decides what data
+the bot keeps and is responsible for it.
+
 ## Information we collect
 
-- **Discord account data:** Discord user id, username, language preference, and team identifiers in servers where the bot is used.
+- **Discord account data:** Discord user id, username and language preference.
+- **Team data:** the teams created in a Discord server (name, tag, leader and roster), stored with that server's id.
 - **Riot account data (only after you opt in via Riot Sign-On):** Riot `puuid`, current Riot ID (`gameName` and `tagLine`), and the time you linked.
 - **Usage data:** commands used, timestamps, and feature interactions needed to operate the bot.
 - **Technical data:** basic request metadata for the RSO callback and troubleshooting.
@@ -49,15 +53,32 @@ Riot at link time.
 We retain linked Riot and Discord data while your account is linked and the bot
 needs it to provide features, or as required by law.
 
+When Premier Planner is removed from a Discord server, the teams and rosters of
+that server are deleted automatically **30 days** later. Adding the bot back
+within those 30 days keeps them, so a removal by mistake loses nothing. Your
+Discord user record and Riot link are not tied to one server and are kept until
+you unlink or ask us to delete them.
+
 You can unlink at any time with `/riot unlink` in Discord, which clears your
 stored Riot identity from Premier Planner. You can also request deletion at any
 time (see Contact).
 
 ## Sharing and disclosure
 
-We do not sell personal information. We may share data with service providers for
-hosting or support under confidentiality obligations. Riot account linking uses
-Riot Sign-On; Riot processes login on their systems under their policies.
+We do not sell personal information and do not share it for advertising. Data
+is handled by these service providers, only to run Premier Planner:
+
+| Provider | What for | Where |
+| --- | --- | --- |
+| Discord | The platform the bot runs on | Discord's own infrastructure |
+| Neon | The database | Frankfurt, Germany (EU) |
+| Our bot host | Runs the bot and the Riot Sign-On callback | Finland (EU) |
+| Vercel | Hosts this documentation site | Vercel's global network |
+| Riot Games | Riot Sign-On, when you link your account | Riot's own systems |
+| HenrikDev API | Looks up public VALORANT Premier team rosters for roster checks | HenrikDev's own systems |
+
+Riot account linking uses Riot Sign-On; Riot processes login on their systems
+under their policies. We may also disclose data when the law requires it.
 
 ## Security
 
@@ -73,7 +94,8 @@ stored Riot identity data. Contact us to exercise these rights.
 ## Changes to this policy
 
 We may update this policy from time to time. The latest version will be posted at
-`https://docs.premierplanner.eu/legal/privacy-policy`.
+`https://docs.premierplanner.eu/legal/privacy-policy`. This version took effect
+on 21 October 2026.
 
 ## Contact
 
